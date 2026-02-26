@@ -1,0 +1,97 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  activeSubscription Subscription?
+  subscriptions      SubscriptionHistory[]
+  folders            Folder[]
+  files              File[]
+}
+
+model Package {
+  id               String   @id @default(uuid())
+  name             String   @unique // Free, Silver, Gold, Diamond
+  maxFolders       Int
+  maxNestingLevel  Int
+  allowedFileTypes String[] // ["Image", "Video", "PDF", "Audio"]
+  maxFileSizeMB    Int
+  totalFileLimit   Int
+  filesPerFolder   Int
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  activeSubscriptions Subscription[]
+  subscriptionHistory  SubscriptionHistory[]
+}
+
+model Subscription {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  packageId String
+  startDate DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  package Package @relation(fields: [packageId], references: [id])
+}
+
+model SubscriptionHistory {
+  id        String   @id @default(uuid())
+  userId    String
+  packageId String
+  startDate DateTime
+  endDate   DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  package Package @relation(fields: [packageId], references: [id])
+}
+
+model Folder {
+  id           String   @id @default(uuid())
+  name         String
+  userId       String
+  parentId     String?
+  nestingLevel Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id])
+  parent        Folder?  @relation("SubFolders", fields: [parentId], references: [id])
+  subFolders    Folder[] @relation("SubFolders")
+  files         File[]
+}
+
+model File {
+  id        String   @id @default(uuid())
+  name      String
+  path      String   // Path on disk or storage URL
+  size      Int      // In bytes
+  type      String   // MIME type or category
+  userId    String
+  folderId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User    @relation(fields: [userId], references: [id])
+  folder Folder? @relation(fields: [folderId], references: [id])
+}
