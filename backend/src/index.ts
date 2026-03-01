@@ -3,7 +3,13 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 
+import fs from 'fs';
 dotenv.config();
+
+// Ensure uploads directory exists
+if (!fs.existsSync('uploads')) {
+    fs.mkdirSync('uploads');
+}
 
 import authRoutes from './routes/authRoutes.js';
 import packageRoutes from './routes/packageRoutes.js';
