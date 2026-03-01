@@ -171,11 +171,26 @@ function DashboardContent() {
             </div>
             <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">SaaS Drive</h1>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400 hidden sm:block">{user.email}</span>
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3">
+              <div className="flex flex-col items-end hidden sm:flex">
+                <span className="text-sm font-medium text-zinc-900 dark:text-zinc-50">{user.email}</span>
+                {activeSub && (
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full mt-0.5">
+                    {activeSub.package?.name || 'Free Plan'}
+                  </span>
+                )}
+              </div>
+            </div>
+            <button
+              onClick={() => router.push('/dashboard/upgrade')}
+              className="text-sm font-semibold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors"
+            >
+              Plans
+            </button>
             <button
               onClick={handleLogout}
-              className="text-sm py-2 px-4 rounded-lg font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
+              className="text-sm py-2 px-4 rounded-lg font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all border border-transparent hover:border-red-100 dark:hover:border-red-900/30"
             >
               Logout
             </button>
