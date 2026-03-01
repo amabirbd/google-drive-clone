@@ -2,6 +2,12 @@
 
 A comprehensive, subscription-based file management system with tiered limit enforcement, featuring a robust Express/Prisma backend and a premium Next.js frontend.
 
+## 🌐 Live Demo
+- **Frontend (Vercel)**: [google-drive-clone-ruby.vercel.app](https://google-drive-clone-ruby.vercel.app/)
+- **Backend (Render)**: Hosted on Render (Free Tier).
+  > [!NOTE]
+  > The backend may experience a **"cold start"** delay of up to 50 seconds on the first request if it has been inactive.
+
 ## 🚀 Key Features
 
 - **Tiered Subscriptions**: Free, Silver, Gold, and Diamond plans with dynamic quotas.
