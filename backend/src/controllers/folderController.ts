@@ -69,6 +69,7 @@ export const updateFolder = async (req: AuthRequest, res: Response) => {
         const { name } = (req as any).body;
 
         const userId = req.user?.userId;
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
         const folder = await prisma.folder.updateMany({
             where: { id, userId },
@@ -88,6 +89,7 @@ export const deleteFolder = async (req: AuthRequest, res: Response) => {
         const { id } = (req as any).params;
 
         const userId = req.user?.userId;
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
         // Recursive delete is usually handled by DB or manually. 
         // Prisma doesn't support recursive delete out of the box for self-relations without careful config.

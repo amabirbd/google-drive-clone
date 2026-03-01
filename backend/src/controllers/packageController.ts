@@ -24,7 +24,7 @@ export const getPackages = async (req: Request, res: Response) => {
 
 export const updatePackage = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
+        const id = req.params.id as string;
         const pkg = await prisma.package.update({
             where: { id },
             data: req.body,
@@ -37,7 +37,7 @@ export const updatePackage = async (req: Request, res: Response) => {
 
 export const deletePackage = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
+        const id = req.params.id as string;
         await prisma.package.delete({ where: { id } });
         res.status(204).send();
     } catch (error) {
