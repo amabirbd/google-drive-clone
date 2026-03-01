@@ -34,7 +34,7 @@ export const uploadFile = async (req: AuthRequest, res: Response) => {
         const newFile = await prisma.file.create({
             data: {
                 name: file.originalname,
-                path: file.path,
+                path: file.path.replace(/\\/g, '/'),
                 size: file.size,
                 type: file.mimetype,
                 userId,
@@ -74,6 +74,7 @@ export const deleteFile = async (req: AuthRequest, res: Response) => {
         const { id } = (req as any).params;
 
         const userId = req.user?.userId;
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
         const file = await prisma.file.findFirst({ where: { id, userId } });
         if (!file) return res.status(404).json({ error: 'File not found' });

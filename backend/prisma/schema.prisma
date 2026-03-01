@@ -1,48 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-
-
-
-generator client {
-  provider = "prisma-client-js"
-}
-
-enum Role {
-  ADMIN
-  USER
-}
-
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  id                 String                @id @default(uuid())
+  email              String                @unique
+  password           String
+  role               Role                  @default(USER)
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  files              File[]
+  folders            Folder[]
   activeSubscription Subscription?
   subscriptions      SubscriptionHistory[]
-  folders            Folder[]
-  files              File[]
 }
 
 model Package {
-  id               String   @id @default(uuid())
-  name             String   @unique // Free, Silver, Gold, Diamond
-  maxFolders       Int
-  maxNestingLevel  Int
-  allowedFileTypes String[] // ["Image", "Video", "PDF", "Audio"]
-  maxFileSizeMB    Int
-  totalFileLimit   Int
-  filesPerFolder   Int
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
+  id                  String                @id @default(uuid())
+  name                String                @unique
+  maxFolders          Int
+  maxNestingLevel     Int
+  allowedFileTypes    String[]
+  maxFileSizeMB       Int
+  totalFileLimit      Int
+  filesPerFolder      Int
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
   activeSubscriptions Subscription[]
-  subscriptionHistory  SubscriptionHistory[]
+  subscriptionHistory SubscriptionHistory[]
 }
 
 model Subscription {
@@ -50,9 +40,8 @@ model Subscription {
   userId    String   @unique
   packageId String
   startDate DateTime @default(now())
-
-  user    User    @relation(fields: [userId], references: [id])
-  package Package @relation(fields: [packageId], references: [id])
+  package   Package  @relation(fields: [packageId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model SubscriptionHistory {
@@ -61,9 +50,8 @@ model SubscriptionHistory {
   packageId String
   startDate DateTime
   endDate   DateTime @default(now())
-
-  user    User    @relation(fields: [userId], references: [id])
-  package Package @relation(fields: [packageId], references: [id])
+  package   Package  @relation(fields: [packageId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Folder {
@@ -74,24 +62,27 @@ model Folder {
   nestingLevel Int      @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-
-  user          User     @relation(fields: [userId], references: [id])
-  parent        Folder?  @relation("SubFolders", fields: [parentId], references: [id])
-  subFolders    Folder[] @relation("SubFolders")
-  files         File[]
+  files        File[]
+  parent       Folder?  @relation("SubFolders", fields: [parentId], references: [id])
+  subFolders   Folder[] @relation("SubFolders")
+  user         User     @relation(fields: [userId], references: [id])
 }
 
 model File {
   id        String   @id @default(uuid())
   name      String
-  path      String   // Path on disk or storage URL
-  size      Int      // In bytes
-  type      String   // MIME type or category
+  path      String
+  size      Int
+  type      String
   userId    String
   folderId  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  folder    Folder?  @relation(fields: [folderId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
 
-  user   User    @relation(fields: [userId], references: [id])
-  folder Folder? @relation(fields: [folderId], references: [id])
+enum Role {
+  ADMIN
+  USER
 }
