@@ -1,9 +1,9 @@
 "use client"
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-export default function DashboardPage() {
+function DashboardContent() {
   const [user, setUser] = useState<any>(null)
   const [folders, setFolders] = useState<any[]>([])
   const [files, setFiles] = useState<any[]>([])
@@ -308,5 +308,13 @@ export default function DashboardPage() {
         </div>
       </main>
     </div>
+  )
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
+      <DashboardContent />
+    </Suspense>
   )
 }
